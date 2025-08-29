@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // ton backend
+  baseURL: "https://health-now-gitspace.onrender.com", // ton backend
   withCredentials: true,
 });
 
