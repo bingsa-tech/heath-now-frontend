@@ -1,8 +1,9 @@
 // src/services/api.ts
 import axios from "axios";
 
+// 🔗 utilise la variable d'environnement définie dans Netlify
 const api = axios.create({
-  baseURL: "https://health-now-gitspace.onrender.com", // ton backend
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000", // fallback en local
   withCredentials: true,
 });
 
