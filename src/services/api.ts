@@ -2,8 +2,9 @@
 import axios from "axios";
 
 // 🔗 utilise la variable d'environnement définie dans Netlify
+// Exemple en prod : VITE_API_URL=https://health-now-gitspace.onrender.com/api
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000", // fallback en local
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api", // ✅ fallback local avec /api
   withCredentials: true,
 });
 
