@@ -1,14 +1,14 @@
-// src/services/api.ts
+// src/services/api.js
 import axios from "axios";
 
-// 🔗 utilise la variable d'environnement définie dans Netlify
-// Exemple en prod : VITE_API_URL=https://health-now-gitspace.onrender.com/api
+// Utilise la variable Netlify (VITE_API_URL) ou le fallback local
+// ⚠️ En prod, règle VITE_API_URL = "https://health-now-gitspace.onrender.com/api"
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api", // ✅ fallback local avec /api
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
   withCredentials: true,
 });
 
-// 👉 Ajoute automatiquement le token si présent
+// ---- Interceptor: injecte automatiquement le token ----
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -17,36 +17,60 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// === Auth services ===
-export async function register(form: { name: string; email: string; password: string; role: string }) {
-  const response = await api.post("api/auth/register", form);
-
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
+// ---- Interceptor: gère 401/403 (token expiré/invalide) ----
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    const status = error?.response?.status;
+    if (status === 401 || status === 403) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      // Optionnel : tu peux décommenter pour forcer une redirection
+      // if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
+      //   window.location.assign("/login");
+      // }
+    }
+    return Promise.reject(error);
   }
-  if (response.data.user) {
-    localStorage.setItem("user", JSON.stringify(response.data.user));
-  }
+);
 
-  return response.data;
+// ---- Helpers ----
+function persistAuth(data) {
+  if (data?.token) localStorage.setItem("token", data.token);
+  if (data?.user) localStorage.setItem("user", JSON.stringify(data.user));
 }
 
-export async function login(form: { email: string; password: string }) {
-  const response = await api.post("api/auth/login", form);
-
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
-  }
-  if (response.data.user) {
-    localStorage.setItem("user", JSON.stringify(response.data.user));
-  }
-
-  return response.data;
+// ---- Services Auth ----
+export async function register(form) {
+  // ✅ baseURL inclut déjà /api → on appelle directement /auth/...
+  const { data } = await api.post("/auth/register", form);
+  persistAuth(data);
+  return data;
 }
 
+export async function login(form) {
+  const { data } = await api.post("/auth/login", form);
+  persistAuth(data);
+  return data;
+}
+
+export async function fetchMe() {
+  const { data } = await api.get("/auth/me");
+  return data.user || data; // selon ton backend
+}
+
+// ---- Utilitaires ----
 export function getUser() {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+  try {
+    const raw = localStorage.getItem("user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getToken() {
+  return localStorage.getItem("token");
 }
 
 export function logout() {
