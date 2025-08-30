@@ -12,7 +12,7 @@ const loading = ref(true);
 
 onMounted(async () => {
   try {
-    const { data } = await api.get("/auth/me");
+    const { data } = await api.get("/protected");
     me.value = data.user;
   } catch (e: any) {
     error.value = e?.response?.data?.message || "Non authentifié";
