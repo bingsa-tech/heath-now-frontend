@@ -11,15 +11,33 @@ const error = ref("");
 const loading = ref(true);
 
 onMounted(async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    error.value = "Token manquant. Veuillez vous reconnecter.";
+    loading.value = false;
+    return;
+  }
   try {
-    const { data } = await api.get("/protected");
+    const res = await fetch("https://health-now-gitspace.onrender.com/api/auth/me", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Erreur lors de la récupération des données");
+    }
+    const data = await res.json();
     me.value = data.user;
   } catch (e: any) {
-    error.value = e?.response?.data?.message || "Non authentifié";
+    error.value = e.message || "Non authentifié";
   } finally {
     loading.value = false;
   }
 });
+
 
 function onLogout() {
   logout();
