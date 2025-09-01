@@ -121,6 +121,8 @@ import { ref, onMounted } from "vue";
 
 // ✅ Données
 const services = ref([
+  "Prise en charge des personnes agées",
+  "Suivi contidien personnes agées",
   "Consultations en ligne",
   "Suivi médical personnalisé",
   "Urgences 24/7",
