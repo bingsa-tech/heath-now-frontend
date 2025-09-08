@@ -11,7 +11,7 @@ async function sendMessage() {
   messages.value.push({ sender: "user", text: input.value });
 
   try {
-    const { data } = await api.post("/chat", { message: input.value });
+    const { data } = await api.post("https://health-now-gitspace.onrender.com/api/chat", { message: input.value });
     messages.value.push({ sender: "bot", text: data.reply });
   } catch {
     messages.value.push({ sender: "bot", text: "❌ Erreur du chatbot." });
