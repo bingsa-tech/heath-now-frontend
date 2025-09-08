@@ -29,7 +29,7 @@ async function sendMessage() {
         :key="i"
         :class="m.sender === 'user' ? 'user-msg' : 'bot-msg'"
       >
-        <strong>{{ m.sender === "user" ? "👤" : "🤖" }}</strong> {{ m.text }}
+        <strong>{{ m.sender === "user" ? "" : "bingsa" }}</strong> {{ m.text }}
       </div>
     </div>
 
