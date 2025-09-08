@@ -18,6 +18,7 @@
           <router-link to="/dashboard" class="text-white text-decoration-none">Dashboard</router-link>
           <router-link to="/login" class="text-white text-decoration-none">Login</router-link>
           <router-link to="/register" class="text-white text-decoration-none">Register</router-link>
+          <router-link to="/chat" class="text-white text-decoration-none">Chat</router-link>
         </nav>
       </div>
     </header>
