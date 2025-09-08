@@ -7,7 +7,8 @@ const routes = [
   { path: "/", redirect: "/dashboard" },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
-  { path: "/dashboard", component: Dashboard }
+  { path: "/dashboard", component: Dashboard },
+  {path : "/chat", component: () => import("./pages/Chatbot.vue") }
 ];
 
 const router = createRouter({
